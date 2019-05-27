@@ -44,6 +44,31 @@ func IncreaseVolume(diff int) error {
 	return err
 }
 
+// GetCapture returns the current input volume (0 to 100).
+// Not working yet, due to different input/output devices
+func GetCapture() (int, error) {
+	out, err := execCmd(getCaptureCmd())
+	if err != nil {
+		return 0, err
+	}
+	return parseVolume(string(out))
+}
+
+// SetCapture sets the input volume to the specified value.
+func SetCapture(volume int) error {
+	if volume < 0 || 100 < volume {
+		return errors.New("out of valid volume range")
+	}
+	_, err := execCmd(setCaptureCmd(volume))
+	return err
+}
+
+// IncreaseCapture increases (or decreases) the input volume by the specified value.
+func IncreaseCapture(diff int) error {
+	_, err := execCmd(increaseCaptureCmd(diff))
+	return err
+}
+
 // GetMuted returns the current muted status.
 func GetMuted() (bool, error) {
 	out, err := execCmd(getMutedCmd())

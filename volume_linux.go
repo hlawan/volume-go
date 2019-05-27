@@ -65,6 +65,37 @@ func increaseVolumeCmd(diff int) []string {
 	return []string{"pactl", "--", "set-sink-volume", "0", sign + strconv.Itoa(diff) + "%"}
 }
 
+func getCaptureCmd() []string {
+	if useAmixer {
+		return []string{"amixer", "get", "Capture"}
+	}
+	return []string{"pactl", "list", "sources"}
+}
+
+// use device 1 as input
+func setCaptureCmd(volume int) []string {
+	if useAmixer {
+		return []string{"amixer", "set", "Capture", strconv.Itoa(volume) + "%"}
+	}
+	return []string{"pactl", "set-source-volume", "1", strconv.Itoa(volume) + "%"}
+}
+
+// use device 1 as input
+func increaseCaptureCmd(diff int) []string {
+	var sign string
+	if diff >= 0 {
+		sign = "+"
+	} else if useAmixer {
+		diff = -diff
+		sign = "-"
+	}
+	if useAmixer {
+		return []string{"amixer", "set", "Capture", strconv.Itoa(diff) + "%" + sign}
+	}
+	return []string{"pactl", "--", "set-source-volume", "1", sign + strconv.Itoa(diff) + "%"}
+}
+
+
 func getMutedCmd() []string {
 	if useAmixer {
 		return []string{"amixer", "get", "Master"}
